@@ -1,12 +1,17 @@
 'use strict';
 
 // REVIEW: Configure an object to hold all of our functions for dynamic updates and article-related event handlers.
-let articleView = {};
+let articleView = {}; //this says let articleView = an empty object
 
-articleView.populateFilters = function() {
+articleView.populateFilters = function() { //pupulateFilters = a key, it has a value of "function"
   $('article').each(function() {
-    // REVIEW: We can declare several variables at once and assign their values later when using let. Keep in mind that we cannot do this with const.
+    // REVIEW: We can declare several variables at once and assign their values later when using let. Keep in mind that we cannot do this with const. You can't change what the variable referrs to with const. 
     let authorName, category, optionTag;
+
+    //can also write this as let authorName;
+    //                       let category;
+    //                       let optionTag;
+
     if (!$(this).hasClass('template')) {
       // REVIEW: We need to take every author name from the page, and make it an option in the Author filter.
       // TODO, Build an <option> DOM element that we can append to the author <select> element.
@@ -28,8 +33,8 @@ articleView.populateFilters = function() {
       // TODONE: Refactor this concatenation using a template literal.
       optionTag = `<option value="${category}">${category}</option>`
 
-      if ($('#category-filter option[value="' + category + '"]').length === 0) {
-        $('#category-filter').append(optionTag);
+      if ($(`#category-filter option[value="${category}"]`).length === 0) {
+        $('#category-filter').append(optionTag); //Hey jQuary, find me everything that has the option of a catagory filter, if you have none of them, append it to the catagory filter.
       }
     }
   });
@@ -37,15 +42,28 @@ articleView.populateFilters = function() {
 
 articleView.handleAuthorFilter = function() {
   $('#author-filter').on('change', function() {
+
+    //can also use const author = $(this).val();
+
     // REVIEW: Inside this function, "this" is the element that triggered the event handler function we are defining. "$(this)" is using jQuery to select that element (analogous to event.target that we have seen before), so we can chain jQuery methods onto it.
-    if ($(this).val()) {
-      
-      // TODO: If the <select> menu was changed to an option that has a value, we first need to hide all the articles, and then show just the ones that match for the author that was selected.
-      $('#articles').hide();
+
+    if ($(this).val()) {  //Hey jQuery, I want to find the value of this. "If's" are looking for truthy or falsy. Empty string, undefined, and null are falsy. If you found something, then it's truthy. 
+
+      // TODO: If the <select> menu was changed to an option that has a truthy value, we first need to hide all the articles, and then show just the ones that match for the author that was selected.
+
+      $('article').hide();
+
       // Use an "attribute selector" to find those articles, and fade them in for the reader.
-      $('#articles').fadeIn(1000);  //BETA CODE
+      $(`article[data-author="${$(this).val()}"]`).fadeIn();
+
+      //or this if you use the above const, $(`article[data-author="${author}"]`).fadeIn();
+
     } else {
-      // TODO: If the <select> menu was changed to an option that is blank, we should first show all the articles, except the one article we are using as a template.
+      // TODONE: If the <select> menu was changed to an option that is blank, we should first show all the articles, except the one article we are using as a template.
+
+      $('article').show();
+
+      $('.template').hide();
 
     }
     $('#category-filter').val('');
@@ -71,7 +89,7 @@ articleView.handleMainNav = function() {
 
 articleView.setTeasers = function() {
   // REVIEW: Hide elements beyond the first 2 in any article body.
-  $('.article-body *:nth-of-type(n+2)').hide();
+  $('.article-body *:nth-of-type(n+2)').hide(); //The *start means get me anything, or * means anything.
 
   // TODO: Add an event handler to reveal all the hidden elements, when the .read-on link is clicked. You can go ahead and hide the "Read On" link once it has been clicked. Be sure to prevent the default link-click action!
   // Ideally, we'd attach this as just one event handler on the #articles section, and let it process (in other words... delegate) any .read-on clicks that happen within child nodes.
